@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  三條遞減的橫線，就是題目 mockup 右上角那顆排序圖示。
+  自己畫是因為專案只帶 material-icons-core，而 Sort 只存在於 extended，
+  為了一顆圖示把整套 icon set 拉進來並不划算。
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:autoMirrored="true"
+    android:tint="?attr/colorControlNormal">
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M4,6h16v2h-16z" />
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M4,11h11v2h-11z" />
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M4,16h6v2h-6z" />
+</vector>
