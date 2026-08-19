@@ -1,4 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">臺股行情</string>
+    <string name="data_date">資料日期 %1$s</string>
+
+    <string name="card_opening_price">開盤價</string>
+    <string name="card_closing_price">收盤價</string>
+    <string name="card_highest_price">最高價</string>
+    <string name="card_lowest_price">最低價</string>
+    <string name="card_change">漲跌價差</string>
+    <string name="card_monthly_average">月平均價</string>
+    <string name="card_transaction">成交筆數</string>
+    <string name="card_trade_volume">成交股數</string>
+    <string name="card_trade_value">成交金額</string>
+    <string name="card_no_trades">當日無成交</string>
+    <string name="card_loading">載入中</string>
+
+    <string name="search_open">搜尋</string>
+    <string name="search_close">關閉搜尋</string>
+    <string name="search_clear">清除搜尋</string>
+    <string name="search_hint">搜尋代號或名稱</string>
+
+    <string name="sort_open">排序方式</string>
+    <string name="sort_title">排序方式</string>
+    <string name="sort_code_desc">依股票代號降序</string>
+    <string name="sort_code_asc">依股票代號升序</string>
+    <string name="sort_selected">已選取</string>
+
+    <string name="empty_title">今日沒有可顯示的資料</string>
+    <string name="empty_body">交易所在這個時段尚未發布任何個股資訊。</string>
+
+    <string name="no_results_title">找不到符合「%1$s」的股票</string>
+    <string name="no_results_body">試試其他代號或名稱。</string>
+    <string name="no_results_clear">清除搜尋</string>
+
+    <string name="error_title">無法載入資料</string>
+    <string name="error_no_network">目前沒有網路連線。</string>
+    <string name="error_timeout">連線逾時，伺服器沒有在時間內回應。</string>
+    <string name="error_http">伺服器回應錯誤（HTTP %1$d）。</string>
+    <string name="error_malformed">收到的資料格式無法解析。</string>
+    <string name="error_unknown">發生未預期的錯誤。</string>
+    <string name="error_retry">重試</string>
+    <string name="error_showing_cache">更新失敗，顯示的是先前抓到的資料</string>
+
+    <string name="detail_title">%1$s %2$s</string>
+    <string name="detail_pe_ratio">本益比</string>
+    <string name="detail_dividend_yield">殖利率(%)</string>
+    <string name="detail_pb_ratio">股價淨值比</string>
+    <string name="detail_unpublished">交易所未提供此標的之本益比資訊。</string>
+    <string name="detail_close">關閉</string>
 </resources>
