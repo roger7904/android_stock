@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 真正的配色由 Compose 決定，這裡只負責第一幀畫出來之前的視窗背景。 -->
+    <style name="Theme.TwseStock" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/window_background</item>
+    </style>
+</resources>
