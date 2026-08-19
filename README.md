@@ -3,6 +3,8 @@
 以[臺灣證券交易所 OpenAPI](https://openapi.twse.com.tw/) 為資料來源的 Android App。
 串接三支日資訊端點，合併成一份可以瀏覽、排序、搜尋的上市個股清單。
 
+demo 影片連結：https://youtu.be/kkT0e57WNSI
+
 | 清單（淺色） | 清單（深色） | 個股資訊 | 排序 |
 |---|---|---|---|
 | <img src="docs/images/list-light.png" width="200"> | <img src="docs/images/list-dark.png" width="200"> | <img src="docs/images/detail-dialog.png" width="200"> | <img src="docs/images/sort-sheet.png" width="200"> |
