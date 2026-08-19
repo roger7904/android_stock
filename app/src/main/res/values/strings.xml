@@ -21,6 +21,7 @@
     <string name="search_hint">搜尋代號或名稱</string>
 
     <string name="sort_open">排序方式</string>
+    <string name="scroll_to_top">回到頂端</string>
     <string name="sort_title">排序方式</string>
     <string name="sort_code_desc">依股票代號降序</string>
     <string name="sort_code_asc">依股票代號升序</string>
