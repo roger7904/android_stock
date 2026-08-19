@@ -27,11 +27,28 @@ android {
 
     buildFeatures {
         compose = true
+        // StockApplication 用 BuildConfig.DEBUG 決定要不要開 network log。
+        buildConfig = true
     }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    testOptions {
+        unitTests {
+            // Compose 的畫面測試在 JVM 上用 Robolectric 跑，需要讀得到資源。
+            isIncludeAndroidResources = true
+        }
+    }
+}
+
+androidComponents {
+    // 單元測試只跑 debug 變體：Compose 的測試 manifest 只掛在 debug，
+    // 同一批測試在 release 再跑一次也不會多驗到任何東西。
+    beforeVariants(selector().withBuildType("release")) { variant ->
+        variant.enableUnitTest = false
     }
 }
 
@@ -62,4 +79,14 @@ dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
+
+    testImplementation(libs.junit4)
+    testImplementation(libs.truth)
+    testImplementation(libs.turbine)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.ext.junit)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
