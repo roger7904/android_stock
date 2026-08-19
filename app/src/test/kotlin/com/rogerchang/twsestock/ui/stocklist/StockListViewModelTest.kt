@@ -6,6 +6,7 @@ import com.rogerchang.twsestock.domain.GetStockListUseCase
 import com.rogerchang.twsestock.domain.model.DataError
 import com.rogerchang.twsestock.domain.model.SortOption
 import com.rogerchang.twsestock.domain.model.Stock
+import com.rogerchang.twsestock.domain.model.ThemeMode
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -22,9 +23,11 @@ class StockListViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val repository = FakeStockRepository()
+    private val themePreferences = FakeThemePreferences()
 
     private fun viewModel() = StockListViewModel(
         repository = repository,
+        themePreferences = themePreferences,
         getStockList = GetStockListUseCase(repository, mainDispatcherRule.dispatcher),
     )
 
@@ -140,6 +143,19 @@ class StockListViewModelTest {
 
         assertThat(viewModel.uiState.value.query).isEmpty()
         assertThat(viewModel.uiState.value.stocks).hasSize(PreviewStocks.all.size)
+    }
+
+    @Test
+    fun `切換主題會寫進偏好並反映在狀態上`() = runTest(mainDispatcherRule.dispatcher) {
+        val viewModel = viewModel()
+        subscribe(viewModel)
+        assertThat(viewModel.uiState.value.themeMode).isEqualTo(ThemeMode.SYSTEM)
+
+        viewModel.onAction(StockListAction.ThemeModeSelected(ThemeMode.DARK))
+        advanceUntilIdle()
+
+        assertThat(viewModel.uiState.value.themeMode).isEqualTo(ThemeMode.DARK)
+        assertThat(viewModel.uiState.value.isThemeMenuVisible).isFalse()
     }
 
     @Test

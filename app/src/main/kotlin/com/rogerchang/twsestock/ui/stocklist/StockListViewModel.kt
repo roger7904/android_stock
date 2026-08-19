@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rogerchang.twsestock.domain.GetStockListUseCase
 import com.rogerchang.twsestock.domain.StockRepository
+import com.rogerchang.twsestock.domain.ThemePreferences
 import com.rogerchang.twsestock.domain.model.DataError
 import com.rogerchang.twsestock.domain.model.SortOption
 import com.rogerchang.twsestock.domain.model.Stock
+import com.rogerchang.twsestock.domain.model.ThemeMode
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,6 +26,7 @@ private const val SUBSCRIPTION_TIMEOUT_MILLIS = 5_000L
 @OptIn(FlowPreview::class)
 class StockListViewModel(
     private val repository: StockRepository,
+    private val themePreferences: ThemePreferences,
     getStockList: GetStockListUseCase,
 ) : ViewModel() {
 
@@ -47,8 +50,9 @@ class StockListViewModel(
             query,
             sort,
             screen,
-        ) { stocks, keyword, sortOption, screenState ->
-            toUiState(stocks, keyword, sortOption, screenState)
+            themePreferences.observeThemeMode(),
+        ) { stocks, keyword, sortOption, screenState, themeMode ->
+            toUiState(stocks, keyword, sortOption, screenState, themeMode)
         }.stateIn(
             scope = viewModelScope,
             // 轉向時不重跑，畫面真的離開了才收掉。
@@ -80,6 +84,15 @@ class StockListViewModel(
                 screen.update { it.copy(isSortSheetVisible = false) }
             }
 
+            StockListAction.ThemeMenuOpened -> screen.update { it.copy(isThemeMenuVisible = true) }
+
+            StockListAction.ThemeMenuDismissed -> screen.update { it.copy(isThemeMenuVisible = false) }
+
+            is StockListAction.ThemeModeSelected -> {
+                screen.update { it.copy(isThemeMenuVisible = false) }
+                viewModelScope.launch { themePreferences.setThemeMode(action.mode) }
+            }
+
             is StockListAction.StockSelected -> screen.update { it.copy(selectedCode = action.code) }
 
             StockListAction.DetailDismissed -> screen.update { it.copy(selectedCode = null) }
@@ -104,6 +117,7 @@ class StockListViewModel(
         keyword: String,
         sortOption: SortOption,
         screenState: ScreenState,
+        themeMode: ThemeMode,
     ): StockListUiState {
         val isLoading = !screenState.hasRefreshed && stocks.isEmpty()
 
@@ -118,6 +132,8 @@ class StockListViewModel(
             error = screenState.error,
             isSearchVisible = screenState.isSearchVisible,
             isSortSheetVisible = screenState.isSortSheetVisible,
+            themeMode = themeMode,
+            isThemeMenuVisible = screenState.isThemeMenuVisible,
             // 存代號而不是整個 Stock：刷新後才不會停在一份已經過期的副本上。
             selectedStock = screenState.selectedCode?.let { code -> stocks.firstOrNull { it.code == code } },
         )
@@ -130,6 +146,7 @@ class StockListViewModel(
         val error: DataError? = null,
         val isSearchVisible: Boolean = false,
         val isSortSheetVisible: Boolean = false,
+        val isThemeMenuVisible: Boolean = false,
         val selectedCode: String? = null,
     )
 }

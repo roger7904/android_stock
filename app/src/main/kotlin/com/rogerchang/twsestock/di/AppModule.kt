@@ -7,5 +7,5 @@ import org.koin.dsl.module
 
 val appModule = module {
     factory { GetStockListUseCase(get()) }
-    viewModel { StockListViewModel(repository = get(), getStockList = get()) }
+    viewModel { StockListViewModel(repository = get(), themePreferences = get(), getStockList = get()) }
 }

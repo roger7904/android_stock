@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.google.common.truth.Truth.assertThat
 import com.rogerchang.twsestock.domain.model.DataError
+import com.rogerchang.twsestock.domain.model.ThemeMode
 import com.rogerchang.twsestock.ui.theme.TwseStockTheme
 import org.junit.Rule
 import org.junit.Test
@@ -119,6 +120,23 @@ class StockListScreenTest {
         composeRule.onNodeWithContentDescription("排序方式").performClick()
 
         assertThat(actions).containsExactly(StockListAction.SortSheetOpened)
+    }
+
+    @Test
+    fun `主題選單列出三種模式`() {
+        show(
+            StockListUiState(
+                stocks = listOf(PreviewStocks.rising),
+                isLoading = false,
+                isThemeMenuVisible = true,
+            ),
+        )
+
+        composeRule.onNodeWithText("跟隨系統").assertIsDisplayed()
+        composeRule.onNodeWithText("淺色").assertIsDisplayed()
+        composeRule.onNodeWithText("深色").performClick()
+
+        assertThat(actions).containsExactly(StockListAction.ThemeModeSelected(ThemeMode.DARK))
     }
 
     @Test
