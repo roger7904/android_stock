@@ -34,6 +34,7 @@ import com.rogerchang.twsestock.domain.model.PriceTrend
 import com.rogerchang.twsestock.domain.model.Stock
 import com.rogerchang.twsestock.domain.model.changeTrend
 import com.rogerchang.twsestock.domain.model.closingPriceTrend
+import com.rogerchang.twsestock.domain.model.openingPriceTrend
 import com.rogerchang.twsestock.ui.theme.CompactNumericTextStyle
 import com.rogerchang.twsestock.ui.theme.LocalStockColors
 import com.rogerchang.twsestock.ui.theme.NumericTextStyle
@@ -52,6 +53,7 @@ fun StockCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val openingColor = trendColor(stock.openingPriceTrend(), stock.hasNoTrades)
     val closingColor = trendColor(stock.closingPriceTrend(), stock.hasNoTrades)
     val changeColor = trendColor(stock.changeTrend(), stock.hasNoTrades)
 
@@ -81,6 +83,7 @@ fun StockCard(
             FigureRow(
                 leadingLabel = stringResource(R.string.card_opening_price),
                 leadingValue = formatPrice(stock.openingPrice),
+                leadingColor = openingColor,
                 trailingLabel = stringResource(R.string.card_closing_price),
                 trailingValue = formatPrice(stock.closingPrice),
                 trailingColor = closingColor,
