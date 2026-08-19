@@ -24,5 +24,13 @@ fun resolveTrend(value: Double?, reference: Double?): PriceTrend = when {
 /** 收盤價對月平均價。 */
 fun Stock.closingPriceTrend(): PriceTrend = resolveTrend(closingPrice, monthlyAveragePrice)
 
+/**
+ * 開盤價對當日收盤價。
+ *
+ * 每個數字各自對照自己的基準，而這兩個基準本來就會不一致：開高走低的股票會出現
+ * 「開盤紅 + 漲跌綠」同時出現在一張卡上，那是對的，不是矛盾。
+ */
+fun Stock.openingPriceTrend(): PriceTrend = resolveTrend(openingPrice, closingPrice)
+
 /** 漲跌價差對 0。 */
 fun Stock.changeTrend(): PriceTrend = resolveTrend(change, reference = 0.0)
