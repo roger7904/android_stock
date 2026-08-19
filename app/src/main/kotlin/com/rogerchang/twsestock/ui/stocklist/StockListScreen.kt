@@ -85,7 +85,7 @@ fun StockListScreen(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = { StockListTopBar(state, scrollBehavior, onAction) },
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        floatingActionButton = { ScrollToTopButton(gridState) },
+        floatingActionButton = { ScrollToTopButton(gridState, scrollBehavior) },
     ) { innerPadding ->
         PullToRefreshBox(
             isRefreshing = state.isRefreshing,
@@ -185,8 +185,12 @@ private fun StockGrid(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ScrollToTopButton(gridState: LazyGridState) {
+private fun ScrollToTopButton(
+    gridState: LazyGridState,
+    scrollBehavior: TopAppBarScrollBehavior,
+) {
     val scope = rememberCoroutineScope()
     // derivedStateOf：每一幀都會重算，但只有答案真的改變時才觸發重組。
     val isVisible by remember {
@@ -198,7 +202,18 @@ private fun ScrollToTopButton(gridState: LazyGridState) {
         enter = scaleIn() + fadeIn(),
         exit = scaleOut() + fadeOut(),
     ) {
-        FloatingActionButton(onClick = { scope.launch { gridState.animateScrollToItem(0) } }) {
+        FloatingActionButton(
+            onClick = {
+                scope.launch {
+                    // 光捲清單不夠。app bar 是被 nested scroll 收起來的，
+                    // animateScrollToItem 不經過那條路徑，所以它會一直維持收合——
+                    // 使用者回到頂端後，標題與右上三顆按鈕全都還在畫面外，點不到。
+                    scrollBehavior.state.heightOffset = 0f
+                    scrollBehavior.state.contentOffset = 0f
+                    gridState.animateScrollToItem(0)
+                }
+            },
+        ) {
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_upward),
                 contentDescription = stringResource(R.string.scroll_to_top),

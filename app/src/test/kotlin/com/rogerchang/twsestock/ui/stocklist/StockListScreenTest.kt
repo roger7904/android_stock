@@ -4,8 +4,11 @@ import android.app.Application
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeUp
 import com.google.common.truth.Truth.assertThat
 import com.rogerchang.twsestock.domain.model.DataError
 import com.rogerchang.twsestock.domain.model.ThemeMode
@@ -120,6 +123,21 @@ class StockListScreenTest {
         composeRule.onNodeWithContentDescription("排序方式").performClick()
 
         assertThat(actions).containsExactly(StockListAction.SortSheetOpened)
+    }
+
+    @Test
+    fun `回到頂端之後右上的按鈕仍然點得到`() {
+        // app bar 是被 nested scroll 收起來的，捲清單回頂端不會自動把它帶回來。
+        // 少了這個，使用者按完「回到頂端」會發現搜尋、主題、排序三顆按鈕都在畫面外。
+        val manyStocks = List(30) { index ->
+            PreviewStocks.rising.copy(code = "1%03d".format(index), name = "測試$index")
+        }
+        show(StockListUiState(stocks = manyStocks, isLoading = false))
+
+        repeat(6) { composeRule.onNode(hasScrollAction()).performTouchInput { swipeUp() } }
+        composeRule.onNodeWithContentDescription("回到頂端").performClick()
+
+        composeRule.onNodeWithContentDescription("排序方式").assertIsDisplayed()
     }
 
     @Test
