@@ -1,5 +1,9 @@
 package com.rogerchang.twsestock.ui.stocklist
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,9 +15,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
@@ -23,6 +30,7 @@ import com.rogerchang.twsestock.R
 import com.rogerchang.twsestock.domain.formatChange
 import com.rogerchang.twsestock.domain.formatCompactCount
 import com.rogerchang.twsestock.domain.formatPrice
+import com.rogerchang.twsestock.domain.model.PriceTrend
 import com.rogerchang.twsestock.domain.model.Stock
 import com.rogerchang.twsestock.domain.model.changeTrend
 import com.rogerchang.twsestock.domain.model.closingPriceTrend
@@ -44,14 +52,24 @@ fun StockCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val stockColors = LocalStockColors.current
-    // 沒有成交就沒有漲跌可言，一整張破折號的卡片不該染上紅綠。
-    val closingColor = if (stock.hasNoTrades) Color.Unspecified else stockColors.colorFor(stock.closingPriceTrend())
-    val changeColor = if (stock.hasNoTrades) Color.Unspecified else stockColors.colorFor(stock.changeTrend())
+    val closingColor = trendColor(stock.closingPriceTrend(), stock.hasNoTrades)
+    val changeColor = trendColor(stock.changeTrend(), stock.hasNoTrades)
+
+    // 這麼大一張卡片，按下去只有 ripple 其實不太感覺得到。
+    // 稍微縮一點點，整張卡才像個按鈕。
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(targetValue = if (isPressed) 0.98f else 1f, label = "pressScale")
 
     Card(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
+        interactionSource = interactionSource,
+        modifier = modifier
+            .fillMaxWidth()
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
     ) {
         Column(
@@ -84,6 +102,23 @@ fun StockCard(
             TradeTotals(stock)
         }
     }
+}
+
+/**
+ * 把漲跌轉成顏色，並讓顏色的變化補間。
+ *
+ * 沒有成交就沒有漲跌可言，一整張破折號的卡片不該染上紅綠；這條規則寫在這裡而不是交給呼叫端，
+ * 才不會在某個組裝狀態的地方被漏掉。
+ *
+ * 會補間是因為刷新是在使用者正在讀的時候落地的。顏色瞬間從綠跳到紅很容易被忽略，
+ * 更糟的是會被誤讀成「它本來就是紅的」。
+ */
+@Composable
+private fun trendColor(trend: PriceTrend, hasNoTrades: Boolean): Color {
+    val stockColors = LocalStockColors.current
+    val target = if (hasNoTrades) stockColors.flat else stockColors.colorFor(trend)
+    val animated by animateColorAsState(targetValue = target, label = "trendColor")
+    return animated
 }
 
 @Composable
