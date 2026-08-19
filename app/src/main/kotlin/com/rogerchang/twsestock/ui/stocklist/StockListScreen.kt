@@ -253,6 +253,11 @@ private fun StockListTopBar(
                         ),
                     )
                 }
+                ThemeMenu(
+                    selected = state.themeMode,
+                    isExpanded = state.isThemeMenuVisible,
+                    onAction = onAction,
+                )
                 IconButton(onClick = { onAction(StockListAction.SortSheetOpened) }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_sort),

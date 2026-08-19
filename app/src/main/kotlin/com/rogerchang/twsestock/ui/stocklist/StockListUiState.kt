@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.rogerchang.twsestock.domain.model.DataError
 import com.rogerchang.twsestock.domain.model.SortOption
 import com.rogerchang.twsestock.domain.model.Stock
+import com.rogerchang.twsestock.domain.model.ThemeMode
 import java.time.LocalDate
 
 /**
@@ -26,6 +27,8 @@ data class StockListUiState(
     val error: DataError? = null,
     val isSearchVisible: Boolean = false,
     val isSortSheetVisible: Boolean = false,
+    val themeMode: ThemeMode = ThemeMode.Default,
+    val isThemeMenuVisible: Boolean = false,
     /** 被點開的個股，非 null 時顯示本益比 dialog。 */
     val selectedStock: Stock? = null,
 )
@@ -49,6 +52,12 @@ sealed interface StockListAction {
     data object SortSheetDismissed : StockListAction
 
     data class SortSelected(val option: SortOption) : StockListAction
+
+    data object ThemeMenuOpened : StockListAction
+
+    data object ThemeMenuDismissed : StockListAction
+
+    data class ThemeModeSelected(val mode: ThemeMode) : StockListAction
 
     data class StockSelected(val code: String) : StockListAction
 
